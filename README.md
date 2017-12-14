@@ -55,9 +55,27 @@ kamdbctl create
 Select yes (Y) to all options.
 
 ```bash
-mysql -u root -p < kamailio.sql
 /etc/init.d/kamailio restart
 ```
+
+## Setup domain and number handling in Kamailio
+Insert the `kamailio.sql` into mysql using something like:
+```bash
+mysql -u root -p < kamailio.sql
+```
+
+
+Take a look in `kamailio.sql` for examples of numbers/domains/mediation servers/proxies.
+
+To add a mediation server:
+1. `INSERT` the mediation server into `address` table with `grp` field set to something in the range 300 -> 399
+	- Note: If you have a Skype for Business site/pool with several mediation servers, add them with the same `grp` field
+2. `INSERT` the number series belonging to the mediation server (pool/site) into `carrierroute` table with `rewrite_host` set to the skype-sip-domain the number series belongs to
+3. `INSERT` the mediation server into `dispatcher` table with `setid` field set to same number chosen for the `grp` field in the `address` table
+4. `INSERT` the SIP domain of the number series into `domain_lookup` table with `groupid` field set to same number chosen for the `grp` field in the `address` table
+
+
+By default, outbound calls from Skype for Business are dispatched to dispatcher group 200. Take a look in `kamailio.sql` for examples on adding a proxy.
 
 ## Skype for Business configuration
 1. Configure PSTN GW in topology builder using TCP and port 5065
