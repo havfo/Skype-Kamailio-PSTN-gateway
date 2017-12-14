@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Restore iptables from stored table
+iptables-restore < /etc/iptables/firewall.conf
+ip6tables-restore < /etc/iptables/firewall6.conf
