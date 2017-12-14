@@ -1,4 +1,5 @@
 USE `kamailio`;
+CREATE TABLE `domain_lookup` (id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY, domain VARCHAR(50) NOT NULL, groupid INT(10) UNSIGNED NOT NULL);
 INSERT INTO `carrier_name` VALUES (1,'skype');
 INSERT INTO `domain_name` VALUES (1,'pstn');
 
