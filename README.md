@@ -19,22 +19,27 @@ find . -type f -print0 | xargs -0 sed -i 's/XXX-XXX/PUT-IP-OF-YOUR-SIP-SERVER-HE
 
 ## Install RTPEngine
 This will do the RTP handling.
+
+The easiest way of installing is to get it from Sipwise repository:
 ```bash
-apt-get install build-essential dpkg-dev debhelper iptables-dev libcurl4-openssl-dev libglib2.0-dev libhiredis-dev libpcre3-dev libssl-dev markdown zlib1g-dev libxmlrpc-core-c3-dev dkms linux-headers-`uname -r` default-libmysqlclient-dev libavcodec-dev libavfilter-dev libavformat-dev libavresample-dev libavutil-dev libevent-dev libjson-glib-dev libpcap-dev
-git clone https://github.com/sipwise/rtpengine.git
-cd rtpengine
-./debian/flavors/no_ngcp
-dpkg-buildpackage
-cd ..
-dpkg -i ngcp-rtpengine-daemon_*.deb ngcp-rtpengine-iptables_*.deb ngcp-rtpengine-kernel-dkms_*.deb
+echo 'deb http://deb.sipwise.com/spce/mr7.1.1/ stretch main' > /etc/apt/sources.list.d/sipwise.list
+echo 'deb-src http://deb.sipwise.com/spce/mr7.1.1/ stretch main' >> /etc/apt/sources.list.d/sipwise.list
+apt-get update
+apt-get install -y --allow-unauthenticated ngcp-keyring
+apt-get update
+apt-get install -y ngcp-rtpengine
+```
+
+After you have successfully installed RTPEngine, copy the configuration from this repository.
+```bash
 cd Skype-Kamailio-PSTN-gateway
 cp etc/default/ngcp-rtpengine-daemon /etc/default/
 cp etc/rtpengine/rtpengine.conf /etc/rtpengine/
 /etc/init.d/ngcp-rtpengine-daemon restart
 ```
 
-## Install IPTables firewall
-This is required by RTPEngine for setting up the IPTables chain, and will persist after reboot. You can run the iptables.sh script at any time after it is set up.
+## Install IPTables firewall (optional)
+RTPEngine handles the chain for itself, but make sure to not block the RTP-ports it is using. Take a look in iptables.sh for details, and apply it by doing the following. This will persist after reboot. You can run the iptables.sh script at any time after it is set up.
 ```bash
 cd Skype-Kamailio-PSTN-gateway
 chmod +x iptables.sh
